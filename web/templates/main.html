@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Населенные пункты</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        .green-table {
+            background-color: #e9f7e9; /* светло-зеленый фон */
+            border-radius: 15px;
+            overflow: hidden;
+            font-size: 0.9rem;
+        }
+        .green-table th {
+            background-color: #41a541; /* насыщенный зелёный */
+            color: #fff;
+            text-align: center;
+            padding: 4px !important;
+        }
+        .green-table td {
+            background-color: #f3fff3; /* очень светлый зелёный */
+            text-align: center;
+            padding: 4px !important;
+        }
+        .green-table tr:hover td {
+            background-color: #b6e6b6; /* при наведении */
+        }
+        .green-table th, .green-table td {
+            border-color: #9cd89c !important;
+        }
+
+        .pagination .page-link {
+            color: #2f7a2f;
+            border-color: #c8e8c8;
+            font-size: 0.85rem;
+            padding: 4px 10px;
+        }
+        .pagination .page-item.active .page-link {
+            background-color: #41a541;
+            border-color: #3b933b;
+            color: #fff;
+        }
+        .pagination .page-link:hover {
+            background-color: #b6e6b6;
+            border-color: #41a541;
+        }
+        .text-title {
+            color: #4cb00a;
+        }
+    </style>
+</head>
+<body class="bg-light">
+
+<div class="container my-5">
+    <h5 class="mb-4 text-center text-title">Статистика по сотрудникам</h5>
+
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle green-table">
+            <thead>
+            <tr>
+                <th>Типы</th>
+                <th>Когда</th>
+                <th>Длительность</th>
+                <th>Куда</th>
+                <th>Скок денег проебал</th>
+                <th>КНПК</th>
+            </tr>
+            </thead>
+            <tbody id="data-body"></tbody>
+        </table>
+    </div>
+
+    <nav class="mb-4">
+        <ul class="pagination justify-content-center my-2" id="pagination"></ul>
+    </nav>
+
+    <div class="row mb-2">
+        <div class="col-md-6">
+            <h5 class="mb-4 text-center text-title">Траты по годам</h5>
+            <canvas id="lineChart"></canvas>
+        </div>
+        <div class="col-md-6">
+            <h5 class="mb-4 text-center text-title">Количество командировок по годам</h5>
+            <canvas id="barChart"></canvas>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="/static/js/main.js"></script>
+<script src="/static/js/employee.js"></script>
+<script src="/static/js/chart.js"></script>
+</body>
+</html>
