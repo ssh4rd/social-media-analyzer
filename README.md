@@ -1,4 +1,4 @@
-# TP_Andreev
+# social-media-analyzer
 
 A Go web application with a custom HTTP router, PostgreSQL database integration, and Docker containerization.
 
@@ -17,7 +17,7 @@ A Go web application with a custom HTTP router, PostgreSQL database integration,
 ## Project Structure
 
 ```
-TP_Andreev/
+social-media-analyzer/
 ├── cmd/
 │   └── app/
 │       └── main.go           # Application entry point
@@ -57,7 +57,7 @@ TP_Andreev/
 
 ```bash
 git clone <repository-url>
-cd TP_Andreev
+cd social-media-analyzer
 ```
 
 ### 2. Configure Environment Variables
@@ -78,7 +78,7 @@ DB_HOST=postgres
 DB_PORT=5432
 DB_USER=postgres
 DB_PASSWORD=postgres
-DB_NAME=tp_andreev
+DB_NAME=social-media-analyzer
 ```
 
 ### 3. Run with Docker Compose
@@ -132,7 +132,7 @@ To verify the data was loaded:
 
 ```bash
 # Check table counts
-docker-compose exec postgres psql -U postgres -d tp_andreev -c "\
+docker-compose exec postgres psql -U postgres -d social-media-analyzer -c "\
 SELECT 'employees' as table_name, COUNT(*) as row_count FROM employees UNION ALL \
 SELECT 'business_trips', COUNT(*) FROM business_trips UNION ALL \
 SELECT 'assignment_to_trips', COUNT(*) FROM assignment_to_trips;"
@@ -180,7 +180,7 @@ The application uses environment variables for configuration, loaded through `in
 - `DB_PORT` - PostgreSQL port (default: 5432)
 - `DB_USER` - Database user (default: postgres)
 - `DB_PASSWORD` - Database password (default: postgres)
-- `DB_NAME` - Database name (default: tp_andreev)
+- `DB_NAME` - Database name (default: social-media-analyzer)
 
 ## API Endpoints
 
@@ -225,7 +225,7 @@ go build -o main ./cmd/app
 ### Build Docker Image
 
 ```bash
-docker build -t tp_andreev .
+docker build -t social-media-analyzer .
 ```
 
 ## License

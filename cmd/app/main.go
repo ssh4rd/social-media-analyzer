@@ -4,11 +4,11 @@ import (
 	"log"
 	"net/http"
 
-	"TP_Andreev/internal/config"
-	"TP_Andreev/internal/db"
-	"TP_Andreev/internal/db/migrations"
-	"TP_Andreev/internal/transport/http/controller"
-	"TP_Andreev/internal/transport/http/router"
+	"social-media-analyzer/internal/config"
+	"social-media-analyzer/internal/db"
+	"social-media-analyzer/internal/db/migrations"
+	"social-media-analyzer/internal/transport/http/controller"
+	"social-media-analyzer/internal/transport/http/router"
 )
 
 func main() {

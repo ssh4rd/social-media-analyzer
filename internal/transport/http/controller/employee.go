@@ -4,7 +4,7 @@ import (
 	"html/template"
 	"net/http"
 
-	"TP_Andreev/internal/transport/http/router"
+	"social-media-analyzer/internal/transport/http/router"
 )
 
 var employeeTpl = template.Must(template.ParseFiles("web/templates/employee.html"))

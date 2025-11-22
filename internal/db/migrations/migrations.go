@@ -1,12 +1,12 @@
 package migrations
 
 import (
-	"TP_Andreev/internal/models"
+	"social-media-analyzer/internal/models"
 
 	"gorm.io/gorm"
 )
 
 func Migrate(db *gorm.DB) error {
-	err := db.AutoMigrate(&models.Employee{}, &models.BusinessTrip{}, &models.AssignmentToTrip{})
+	err := db.AutoMigrate(&models.Group{}, &models.Post{})
 	return err
 }
