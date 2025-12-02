@@ -31,7 +31,6 @@ func main() {
 
 	// Initialize controller
 	pageCtrl := &controller.MainController{}
-	employeeCtrl := &controller.EmployeeController{}
 
 	// Serve static files
 	fs := http.FileServer(http.Dir("web/static"))
@@ -39,7 +38,6 @@ func main() {
 
 	// Register routes
 	r.GET("/", pageCtrl.GetMainPage)
-	r.GET("/employee/:id", employeeCtrl.GetEmployee)
 
 	// Start server with both router and static handler
 	http.Handle("/", r)

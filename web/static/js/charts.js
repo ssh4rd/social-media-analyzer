@@ -1,30 +1,24 @@
 document.addEventListener("DOMContentLoaded", () => {
+    const labels = data.map(d => d.group);
 
-    // Метки — типы
-    const labels = data.map(d => d.type);
+    // График 1: Средние лайки на пост
+    const avgLikes = data.map(d => d.avgLikes);
 
-    // Данные для графика 1 — деньги
-    const money = data.map(d => d.money);
-
-    // Данные для графика 2 — длительность в числах
-    const duration = data.map(d => parseInt(d.duration)); // "3 дня" → 3
-
-    // === ГРАФИК 1: Деньги ===
     const ctxLine1 = document.getElementById('lineChart').getContext('2d');
     new Chart(ctxLine1, {
         type: 'line',
         data: {
             labels: labels,
             datasets: [{
-                label: 'Сколько денег потрачено',
-                data: money,
-                borderColor: '#2e8b57',
-                backgroundColor: 'rgba(46,139,87,0.2)',
+                label: 'Сред. лайки на пост',
+                data: avgLikes,
+                borderColor: '#3399ff',
+                backgroundColor: 'rgba(51,153,255,0.2)',
                 tension: 0.3,
                 pointStyle: 'circle',
                 pointRadius: 6,
                 pointHoverRadius: 10,
-                pointBackgroundColor: '#3cb371'
+                pointBackgroundColor: '#66b3ff'
             }]
         },
         options: {
@@ -34,22 +28,24 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // === ГРАФИК 2: Длительность ===
+    // График 2: Средние комментарии на пост
+    const avgComments = data.map(d => d.avgComments);
+
     const ctxLine2 = document.getElementById('barChart').getContext('2d');
     new Chart(ctxLine2, {
         type: 'line',
         data: {
             labels: labels,
             datasets: [{
-                label: 'Длительность поездки (дни)',
-                data: duration,
-                borderColor: '#3cb371',
-                backgroundColor: 'rgba(60,179,113,0.2)',
+                label: 'Сред. кол-во комментов',
+                data: avgComments,
+                borderColor: '#66ccff',
+                backgroundColor: 'rgba(102,204,255,0.2)',
                 tension: 0.3,
                 pointStyle: 'rectRot',
                 pointRadius: 6,
                 pointHoverRadius: 10,
-                pointBackgroundColor: '#90ee90'
+                pointBackgroundColor: '#99ddff'
             }]
         },
         options: {
@@ -58,5 +54,4 @@ document.addEventListener("DOMContentLoaded", () => {
             scales: { y: { beginAtZero: true } }
         }
     });
-
 });
