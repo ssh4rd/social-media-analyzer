@@ -7,11 +7,10 @@ import (
 	"social-media-analyzer/internal/transport/http/router"
 )
 
-var mainTpl = template.Must(template.ParseFiles("web/templates/main.html"))
-
 type MainController struct{}
 
 // GetMainPage handles GET / requests
 func (pc *MainController) GetMainPage(w http.ResponseWriter, r *http.Request, params router.Params) {
-	mainTpl.Execute(w, nil)
+	tpl := template.Must(template.ParseFiles("web/templates/main.html"))
+	tpl.Execute(w, nil)
 }

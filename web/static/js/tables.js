@@ -1,16 +1,15 @@
 const data = [
-    { id: 1, date: "01.01.2025", type: "Тип A", duration: "2 дня", destination: "Куда A", money: 500 },
-    { id: 2, date: "05.01.2025", type: "Тип B", duration: "3 дня", destination: "Куда B", money: 800 },
-    { id: 3, date: "10.01.2025", type: "Тип C", duration: "1 день", destination: "Куда C",  money: 300 },
-    { id: 4, date: "12.01.2025", type: "Тип D", duration: "4 дня", destination: "Куда D", money: 700 },
-    { id: 5, date: "15.01.2025", type: "Тип E", duration: "5 дней", destination: "Куда E",  money: 1200 },
-    { id: 6, date: "18.01.2025", type: "Тип F", duration: "2 дня", destination: "Куда F", money: 400 },
-    { id: 7, date: "20.01.2025", type: "Тип G", duration: "3 дня", destination: "Куда G", money: 900 },
-    { id: 8, date: "22.01.2025", type: "Тип H", duration: "2 дня", destination: "Куда H", money: 600 },
-    { id: 9, date: "25.01.2025", type: "Тип I", duration: "1 день", destination: "Куда I",  money: 250 },
-    { id: 10, date: "28.01.2025", type: "Тип J", duration: "4 дня", destination: "Куда J", money: 1000 }
+    { group: "Группа A", members: 10, postsLastWeek: 25, totalLikes: 500, avgLikes: 20, maxLikes: 50, avgComments: 5, avgImages: 2 },
+    { group: "Группа B", members: 15, postsLastWeek: 30, totalLikes: 800, avgLikes: 26.7, maxLikes: 70, avgComments: 8, avgImages: 3 },
+    { group: "Группа C", members: 8, postsLastWeek: 20, totalLikes: 300, avgLikes: 15, maxLikes: 35, avgComments: 4, avgImages: 1 },
+    { group: "Группа D", members: 12, postsLastWeek: 28, totalLikes: 700, avgLikes: 25, maxLikes: 60, avgComments: 6, avgImages: 2 },
+    { group: "Группа E", members: 20, postsLastWeek: 40, totalLikes: 1200, avgLikes: 30, maxLikes: 90, avgComments: 10, avgImages: 4 },
+    { group: "Группа F", members: 9, postsLastWeek: 22, totalLikes: 400, avgLikes: 18.2, maxLikes: 45, avgComments: 5, avgImages: 2 },
+    { group: "Группа G", members: 14, postsLastWeek: 35, totalLikes: 900, avgLikes: 25.7, maxLikes: 65, avgComments: 7, avgImages: 3 },
+    { group: "Группа H", members: 11, postsLastWeek: 27, totalLikes: 600, avgLikes: 22.2, maxLikes: 55, avgComments: 6, avgImages: 2 },
+    { group: "Группа I", members: 7, postsLastWeek: 18, totalLikes: 250, avgLikes: 13.9, maxLikes: 30, avgComments: 3, avgImages: 1 },
+    { group: "Группа J", members: 16, postsLastWeek: 38, totalLikes: 1000, avgLikes: 26.3, maxLikes: 80, avgComments: 9, avgImages: 3 }
 ];
-
 const rowsPerPage = 5;
 let currentPage = 1;
 
@@ -25,18 +24,14 @@ function renderTable(page = 1) {
     pageData.forEach(item => {
         const row = `
             <tr>
-                <td>${item.type}</td>
-                <td>${item.date}</td>
-                <td>${item.duration}</td>
-                <td>${item.destination}</td>
-                <td>${item.money}</td>
-                <td>
-                    <a href="/employee/${item.id}">
-                        <button class="btn btn-success btn-sm")">
-                            Открыть
-                        </button>
-                    </a>
-                </td>
+                <td>${item.group}</td>
+                <td>${item.members}</td>
+                <td>${item.postsLastWeek}</td>
+                <td>${item.totalLikes}</td>
+                <td>${item.avgLikes}</td>
+                <td>${item.maxLikes}</td>
+                <td>${item.avgComments}</td>
+                <td>${item.avgImages}</td>
             </tr>`;
         tbody.insertAdjacentHTML("beforeend", row);
     });
