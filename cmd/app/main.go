@@ -32,9 +32,11 @@ func main() {
 
 	// Initialize services
 	vkService := service.NewVKService(&cfg.VK)
+	analyticsService := service.NewAnalyticsService(db)
+	templateDataService := service.NewTemplateDataService(analyticsService)
 
 	// Initialize controllers
-	pageCtrl := controller.NewMainController(db)
+	pageCtrl := controller.NewMainController(templateDataService)
 	groupCtrl := controller.NewGroupController(db, vkService)
 
 	// Register routes

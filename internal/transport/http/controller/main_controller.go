@@ -1,87 +1,55 @@
 package controller
 
 import (
-	"fmt"
+	"encoding/json"
 	"html/template"
 	"net/http"
 
-	"social-media-analyzer/internal/models"
+	"social-media-analyzer/internal/service"
 	"social-media-analyzer/internal/transport/http/router"
-
-	"gorm.io/gorm"
 )
 
 type MainController struct {
-	db *gorm.DB
+	templateDataService *service.TemplateDataService
 }
 
 type PageData struct {
-	Groups []GroupStats
+	Groups     []service.TemplateGroupData
+	ChartData  service.ChartDataForTemplate
 }
 
-type GroupStats struct {
-	ID                 uint
-	Domain             string
-	TotalPosts         int
-	TotalLikes         int
-	AvgLikesPerPost    float64
-	MaxLikesPerPost    int
-	AvgCommentsPerPost float64
-	PostsLastWeek      int
-}
-
-func NewMainController(db *gorm.DB) *MainController {
-	return &MainController{db: db}
+func NewMainController(templateDataService *service.TemplateDataService) *MainController {
+	return &MainController{templateDataService: templateDataService}
 }
 
 // GetMainPage handles GET / requests
 func (mc *MainController) GetMainPage(w http.ResponseWriter, r *http.Request, params router.Params) {
-	// Fetch groups
-	var groups []models.Group
-	if err := mc.db.Find(&groups).Error; err != nil {
-		http.Error(w, "Failed to fetch groups", http.StatusInternalServerError)
+	// Prepare group data for template rendering
+	groupData, err := mc.templateDataService.PrepareGroupsForTemplate()
+	if err != nil {
+		http.Error(w, "Failed to prepare template data", http.StatusInternalServerError)
 		return
 	}
 
-	// Calculate stats for each group
-	pageData := PageData{}
-	for _, group := range groups {
-		var posts []models.Post
-
-		if err := mc.db.Where("group_id = ?", group.ID).Find(&posts).Error; err != nil {
-			continue
-		}
-
-		stats := GroupStats{
-			ID:         group.ID,
-			Domain:     group.Domain,
-			TotalPosts: len(posts),
-		}
-
-		fmt.Println(posts)
-
-		if len(posts) > 0 {
-			totalLikes := 0
-			maxLikes := 0
-			totalComments := 0
-
-			for _, post := range posts {
-				totalLikes += post.Likes
-				totalComments += post.Comments
-				if post.Likes > maxLikes {
-					maxLikes = post.Likes
-				}
-			}
-
-			stats.TotalLikes = totalLikes
-			stats.MaxLikesPerPost = maxLikes
-			stats.AvgLikesPerPost = float64(totalLikes) / float64(len(posts))
-			stats.AvgCommentsPerPost = float64(totalComments) / float64(len(posts))
-		}
-
-		pageData.Groups = append(pageData.Groups, stats)
+	// Prepare chart data for template rendering
+	chartData, err := mc.templateDataService.PrepareChartDataForTemplate()
+	if err != nil {
+		http.Error(w, "Failed to prepare chart data", http.StatusInternalServerError)
+		return
 	}
 
-	tpl := template.Must(template.ParseFiles("web/templates/main.html"))
+	pageData := PageData{
+		Groups:    groupData,
+		ChartData: chartData,
+	}
+
+	funcMap := template.FuncMap{
+		"json": func(v interface{}) template.JS {
+			b, _ := json.Marshal(v)
+			return template.JS(b)
+		},
+	}
+
+	tpl := template.Must(template.New("main.html").Funcs(funcMap).ParseFiles("web/templates/main.html"))
 	tpl.Execute(w, pageData)
 }

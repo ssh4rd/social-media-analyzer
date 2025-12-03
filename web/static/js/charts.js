@@ -1,9 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const labels = data.map(d => d.group);
+    // Use chart data from backend
+    const labels = chartData.subscribers.map(sub => `${sub} подписчиков`);
 
-    // График 1: Средние лайки на пост
-    const avgLikes = data.map(d => d.avgLikes);
-
+    // Chart 1: Dependence of average likes on subscribers
     const ctxLine1 = document.getElementById('lineChart').getContext('2d');
     new Chart(ctxLine1, {
         type: 'line',
@@ -11,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
             labels: labels,
             datasets: [{
                 label: 'Сред. лайки на пост',
-                data: avgLikes,
+                data: chartData.avgLikes,
                 borderColor: '#3399ff',
                 backgroundColor: 'rgba(51,153,255,0.2)',
                 tension: 0.3,
@@ -28,9 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // График 2: Средние комментарии на пост
-    const avgComments = data.map(d => d.avgComments);
-
+    // Chart 2: Dependence of average comments on subscribers
     const ctxLine2 = document.getElementById('barChart').getContext('2d');
     new Chart(ctxLine2, {
         type: 'line',
@@ -38,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
             labels: labels,
             datasets: [{
                 label: 'Сред. кол-во комментов',
-                data: avgComments,
+                data: chartData.avgComments,
                 borderColor: '#66ccff',
                 backgroundColor: 'rgba(102,204,255,0.2)',
                 tension: 0.3,
