@@ -12,6 +12,7 @@ import (
 type Config struct {
 	Server   ServerConfig
 	Database DatabaseConfig
+	VK       VKConfig
 }
 
 type ServerConfig struct {
@@ -24,6 +25,11 @@ type DatabaseConfig struct {
 	User     string
 	Password string
 	Name     string
+}
+
+type VKConfig struct {
+	AccessToken string
+	APIVersion  string
 }
 
 // Load reads configuration from environment variables
@@ -47,6 +53,10 @@ func Load() (*Config, error) {
 			User:     getEnv("DB_USER", "postgres"),
 			Password: getEnv("DB_PASSWORD", "postgres"),
 			Name:     getEnv("DB_NAME", "database"),
+		},
+		VK: VKConfig{
+			AccessToken: getEnv("VK_ACCESS_TOKEN", ""),
+			APIVersion:  getEnv("VK_API_VERSION", "5.131"),
 		},
 	}
 

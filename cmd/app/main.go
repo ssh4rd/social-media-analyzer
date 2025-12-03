@@ -7,6 +7,7 @@ import (
 	"social-media-analyzer/internal/config"
 	"social-media-analyzer/internal/db"
 	"social-media-analyzer/internal/db/migrations"
+	"social-media-analyzer/internal/service"
 	"social-media-analyzer/internal/transport/http/controller"
 	"social-media-analyzer/internal/transport/http/router"
 )
@@ -29,17 +30,27 @@ func main() {
 	// Initialize router
 	r := router.New()
 
-	// Initialize controller
-	pageCtrl := &controller.MainController{}
+	// Initialize services
+	vkService := service.NewVKService(&cfg.VK)
 
-	// Serve static files
-	fs := http.FileServer(http.Dir("web/static"))
-	http.Handle("/static/", http.StripPrefix("/static/", fs))
+	// Initialize controllers
+	pageCtrl := controller.NewMainController(db)
+	groupCtrl := controller.NewGroupController(db, vkService)
 
 	// Register routes
 	r.GET("/", pageCtrl.GetMainPage)
+	r.POST("/api/groups", groupCtrl.AddGroup)
 
-	// Start server with both router and static handler
-	http.Handle("/", r)
-	http.ListenAndServe(":"+cfg.Server.Port, nil)
+	// Create multiplexer
+	mux := http.NewServeMux()
+	
+	// Serve static files
+	fs := http.FileServer(http.Dir("web/static"))
+	mux.Handle("/static/", http.StripPrefix("/static/", fs))
+
+	// Use router as fallback for all other routes
+	mux.Handle("/", r)
+	
+	log.Printf("Server starting on port %s", cfg.Server.Port)
+	log.Fatal(http.ListenAndServe(":"+cfg.Server.Port, mux))
 }
