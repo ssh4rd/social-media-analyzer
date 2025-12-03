@@ -93,31 +93,35 @@
         </div>
     </div>
 
+    <div class="alert alert-info" role="alert">
+        <small><strong>Примечание:</strong> Данные анализируются на основе последних 100 постов из группы (или менее, если группа имеет меньше постов).</small>
+    </div>
+
     <div class="table-responsive">
         <table class="table table-bordered table-hover align-middle blue-table">
             <thead>
             <tr>
                 <th>Группа</th>
                 <th>Подписчики</th>
-                <th>Кол-во постов за последнюю неделю</th>
+                <th>Дата парсинга</th>
+                <th>Кол-во постов</th>
                 <th>Общее кол-во лайков</th>
                 <th>Среднее кол-во лайков на посте</th>
                 <th>Макс. кол-во лайков на пост</th>
                 <th>Сред. кол-во комментов</th>
-                <th>Сред. кол-во изображений</th>
             </tr>
             </thead>
             <tbody id="data-body">
                 {{range .Groups}}
                 <tr>
                     <td>{{.Domain}}</td>
-                    <td>-</td>
-                    <td>{{.PostsLastWeek}}</td>
+                    <td>{{.Subscribers}}</td>
+                    <td>{{.ParsedAt}}</td>
+                    <td>{{.TotalPosts}}</td>
                     <td>{{.TotalLikes}}</td>
                     <td>{{printf "%.2f" .AvgLikesPerPost}}</td>
                     <td>{{.MaxLikesPerPost}}</td>
                     <td>{{printf "%.2f" .AvgCommentsPerPost}}</td>
-                    <td>-</td>
                 </tr>
                 {{end}}
             </tbody>
@@ -142,6 +146,13 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const chartData = {
+        subscribers: {{.ChartData.Subscribers | json}},
+        avgLikes: {{.ChartData.AvgLikes | json}},
+        avgComments: {{.ChartData.AvgComments | json}}
+    };
+</script>
 <script src="static/js/charts.js"></script>
 <script src="static/js/tables.js"></script>
 <script src="static/js/groups.js"></script>

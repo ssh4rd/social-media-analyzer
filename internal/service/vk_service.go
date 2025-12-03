@@ -18,9 +18,10 @@ type VKService struct {
 }
 
 type VKGroupInfo struct {
-	ID     int    `json:"id"`
-	Name   string `json:"name"`
-	Domain string `json:"screen_name"`
+	ID      int    `json:"id"`
+	Name    string `json:"name"`
+	Domain  string `json:"screen_name"`
+	Members int    `json:"members_count"`
 }
 
 type VKGroupResponse struct {
@@ -106,9 +107,9 @@ func (s *VKService) GetGroupInfo(screenName string) (*models.Group, error) {
 		return nil, fmt.Errorf("VK access token not configured")
 	}
 
-	// Build API request URL
+	// Build API request URL with members_count field
 	url := fmt.Sprintf(
-		"https://api.vk.com/method/groups.getById?group_ids=%s&fields=members,description&v=%s&access_token=%s",
+		"https://api.vk.com/method/groups.getById?group_ids=%s&fields=members_count&v=%s&access_token=%s",
 		screenName, s.apiVersion, s.accessToken,
 	)
 
@@ -134,7 +135,8 @@ func (s *VKService) GetGroupInfo(screenName string) (*models.Group, error) {
 	groupInfo := vkResp.Response[0]
 
 	group := &models.Group{
-		Domain: groupInfo.Domain,
+		Domain:      groupInfo.Domain,
+		Subscribers: groupInfo.Members,
 	}
 
 	return group, nil

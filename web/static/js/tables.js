@@ -1,4 +1,4 @@
-const rowsPerPage = 5;
+const rowsPerPage = 20;
 let currentPage = 1;
 let data = [];
 
@@ -10,13 +10,13 @@ function extractDataFromTable() {
         const cells = row.querySelectorAll("td");
         return {
             group: cells[0]?.textContent?.trim() || "",
-            members: cells[1]?.textContent?.trim() || "-",
-            postsLastWeek: parseInt(cells[2]?.textContent?.trim()) || 0,
-            totalLikes: parseInt(cells[3]?.textContent?.trim()) || 0,
-            avgLikes: parseFloat(cells[4]?.textContent?.trim()) || 0,
-            maxLikes: parseInt(cells[5]?.textContent?.trim()) || 0,
-            avgComments: parseFloat(cells[6]?.textContent?.trim()) || 0,
-            avgImages: cells[7]?.textContent?.trim() || "-"
+            members: parseInt(cells[1]?.textContent?.trim()) || 0,
+            parsedAt: cells[2]?.textContent?.trim() || "-",
+            totalPosts: parseInt(cells[3]?.textContent?.trim()) || 0,
+            totalLikes: parseInt(cells[4]?.textContent?.trim()) || 0,
+            avgLikes: parseFloat(cells[5]?.textContent?.trim()) || 0,
+            maxLikes: parseInt(cells[6]?.textContent?.trim()) || 0,
+            avgComments: parseFloat(cells[7]?.textContent?.trim()) || 0
         };
     });
 }
@@ -39,12 +39,12 @@ function renderTable(page = 1) {
             <tr>
                 <td>${item.group}</td>
                 <td>${item.members}</td>
-                <td>${item.postsLastWeek}</td>
+                <td>${item.parsedAt}</td>
+                <td>${item.totalPosts}</td>
                 <td>${item.totalLikes}</td>
                 <td>${typeof item.avgLikes === 'number' ? item.avgLikes.toFixed(2) : item.avgLikes}</td>
                 <td>${item.maxLikes}</td>
                 <td>${typeof item.avgComments === 'number' ? item.avgComments.toFixed(2) : item.avgComments}</td>
-                <td>${item.avgImages}</td>
             </tr>`;
         tbody.insertAdjacentHTML("beforeend", row);
     });

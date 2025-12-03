@@ -38,9 +38,6 @@ func NewGroupController(db *gorm.DB, vkService *service.VKService) *GroupControl
 
 // AddGroup handles POST /api/groups requests
 func (gc *GroupController) AddGroup(w http.ResponseWriter, r *http.Request, params router.Params) {
-
-	fmt.Println("dfsdfsdgs")
-
 	w.Header().Set("Content-Type", "application/json")
 
 	var req AddGroupRequest
@@ -59,7 +56,7 @@ func (gc *GroupController) AddGroup(w http.ResponseWriter, r *http.Request, para
 	}
 
 	// Parse group from link using VK API
-	group, err := gc.vkService.ParseGroupFromLink(req.Link)
+	parsedGroup, err := gc.vkService.ParseGroupFromLink(req.Link)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		json.NewEncoder(w).Encode(ErrorResponse{Message: err.Error()})
@@ -67,36 +64,51 @@ func (gc *GroupController) AddGroup(w http.ResponseWriter, r *http.Request, para
 	}
 
 	// Check if group already exists
-	// var existingGroup models.Group
-	// if result := gc.db.Where("domain = ?", group.Domain).First(&existingGroup); result.Error == nil {
-	// 	w.WriteHeader(http.StatusConflict)
-	// 	json.NewEncoder(w).Encode(ErrorResponse{Message: "Group already exists"})
-	// 	return
-	// }
+	var existingGroup models.Group
+	groupExists := gc.db.Where("domain = ?", parsedGroup.Domain).First(&existingGroup).Error == nil
 
-	// Create group in database
-	if result := gc.db.Create(&group); result.Error != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		json.NewEncoder(w).Encode(ErrorResponse{Message: "Failed to add group"})
-		return
+	var groupID uint
+	if groupExists {
+		// Update existing group
+		if result := gc.db.Model(&existingGroup).Updates(parsedGroup); result.Error != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(ErrorResponse{Message: "Failed to update group"})
+			return
+		}
+		groupID = existingGroup.ID
+		parsedGroup.ID = existingGroup.ID
+	} else {
+		// Create new group
+		if result := gc.db.Create(&parsedGroup); result.Error != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			json.NewEncoder(w).Encode(ErrorResponse{Message: "Failed to add group"})
+			return
+		}
+		groupID = parsedGroup.ID
 	}
 
 	// Fetch wall posts asynchronously
 	go func() {
-		if err := gc.fetchAndSaveWallPosts(group); err != nil {
-			log.Printf("Failed to fetch wall posts for group %s: %v\n", group.Domain, err)
+		if err := gc.fetchAndSaveWallPosts(parsedGroup); err != nil {
+			log.Printf("Failed to fetch wall posts for group %s: %v\n", parsedGroup.Domain, err)
 		}
 	}()
 
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(SuccessResponse{
 		Message: "Group added successfully",
-		GroupID: group.ID,
+		GroupID: groupID,
 	})
 }
 
 // fetchAndSaveWallPosts fetches wall posts from VK API and saves them to database
 func (gc *GroupController) fetchAndSaveWallPosts(group *models.Group) error {
+	// Delete all existing posts for this group
+	if result := gc.db.Where("group_id = ?", group.ID).Delete(&models.Post{}); result.Error != nil {
+		log.Printf("Failed to delete existing posts for group %s: %v\n", group.Domain, result.Error)
+		return result.Error
+	}
+
 	// Fetch wall posts from VK API
 	wallPosts, err := gc.vkService.GetWallPosts(group.Domain, 100)
 	if err != nil {
@@ -113,12 +125,6 @@ func (gc *GroupController) fetchAndSaveWallPosts(group *models.Group) error {
 			Reactions: vkPost.Likes.Count, // Using likes as reactions for now
 			Likes:     vkPost.Likes.Count,
 			Comments:  vkPost.Comments.Count,
-		}
-
-		// Check if post already exists
-		var existingPost models.Post
-		if result := gc.db.Where("group_id = ? AND date = ? AND text = ?", group.ID, post.Date, post.Text).First(&existingPost); result.Error == nil {
-			continue // Post already exists
 		}
 
 		// Save post to database
