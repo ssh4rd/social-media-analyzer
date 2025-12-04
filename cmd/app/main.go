@@ -30,14 +30,13 @@ func main() {
 	// Initialize router
 	r := router.New()
 
-	// Initialize services
-	vkService := service.NewVKService(&cfg.VK)
-	analyticsService := service.NewAnalyticsService(db)
-	templateDataService := service.NewTemplateDataService(analyticsService)
+	// Initialize services using Factory pattern
+	factory := service.NewServiceFactory(cfg, db)
+	services := factory.CreateServices()
 
 	// Initialize controllers
-	pageCtrl := controller.NewMainController(templateDataService)
-	groupCtrl := controller.NewGroupController(db, vkService)
+	pageCtrl := controller.NewMainController(services.TemplateDataService)
+	groupCtrl := controller.NewGroupController(db, services.VKService)
 
 	// Register routes
 	r.GET("/", pageCtrl.GetMainPage)
